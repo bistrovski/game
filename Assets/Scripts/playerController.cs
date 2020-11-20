@@ -22,12 +22,15 @@ public class playerController : MonoBehaviour
     {
         velocityY += Time.deltaTime * gravity; // gravity   
         
-        velocityX = Input.GetAxis("Horizontal") * Time.deltaTime * turnSpeed; // turn right or left
+        velocityX = Input.GetAxis("Horizontal")  * turnSpeed * Time.deltaTime; // turn right or left
         
-        Vector3 velocity  = Vector3.right * velocityX + transform.forward * speed + Vector3.up * velocityY; // turn right or left + run forward + gravity
+        Vector3 velocity  = transform.right * velocityX + transform.forward * speed + Vector3.up * velocityY; // turn right or left + run forward + gravity
         
+        anim.SetFloat("horizontal", Input.GetAxis("Horizontal"));
         
         controller.Move (velocity * Time.deltaTime); 
+        
+        
 
         if (controller.isGrounded) {
 			velocityY = 0;
@@ -38,6 +41,18 @@ public class playerController : MonoBehaviour
             Jump();
             
         }
+
+        if(Input.GetAxis("Vertical") < 0) // down
+        {
+            Down();
+            controller.height = 0.9f;
+            controller.center = new Vector3 (0 , 0.45f , 0);
+        }
+        else
+        {
+            controller.height = 1.8f;
+            controller.center = new Vector3 (0 , 0.9f , 0);
+        }
     }
 
     void Jump() {
@@ -47,5 +62,13 @@ public class playerController : MonoBehaviour
 			float jumpVelocity = Mathf.Sqrt (-2 * gravity * jumpHeight);
 			velocityY = jumpVelocity;
 		}
+    }
+
+    void Down()
+    {
+        if(controller.isGrounded)
+        {
+            anim.SetFloat("vertical", Input.GetAxis("Vertical"));
+        }
     }
 }
