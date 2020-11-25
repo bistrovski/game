@@ -10,11 +10,15 @@ public class tileManager : MonoBehaviour
     public int numberOfTerrains = 1;
     public Transform playerTransform;
     private List <GameObject> listOfTerrains = new List<GameObject>();
+   
     void Start()
     {
-        for(int i = 0; i<numberOfTerrains;i++)
+        for (int i = 0; i < numberOfTerrains; i++)
         {
-            SpawnTerrain(0);            
+            if(i==0)
+                SpawnTerrain(0);
+            else
+                SpawnTerrain(Random.Range(0, terrains.Length));
         }
     }
 
@@ -23,7 +27,7 @@ public class tileManager : MonoBehaviour
     {
         if(playerTransform.position.z > zSpawn - (terrainLength)) // infinity terrain and delete terrains which player crossed
         {
-            SpawnTerrain(0);  
+            SpawnTerrain(Random.Range(0, terrains.Length));  
             DeleteTerrain();          
         }       
     }
