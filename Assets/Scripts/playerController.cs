@@ -1,74 +1,66 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class playerController : MonoBehaviour
 {
     public Animator anim;
     public CharacterController controller;
+    public TextMeshProUGUI pointsTime;
+    private GameObject gem;
     public float speed = 2;  
-    public float turnSpeed = 1000;
+    public float turnSpeed = 2;
     public float gravity = -12;
 	public float jumpHeight = 1;
-    float velocityY;
-    float velocityX;
+    float velocityY , velocityX;
+    private int points;  
     void Start()
     {
-        
-      
+
     }
 
     void Update()
     {
-        velocityY += Time.deltaTime * gravity; // gravity   
-        
-        velocityX = Input.GetAxis("Horizontal")  * turnSpeed * Time.deltaTime; // turn right or left
-        
-        Vector3 velocity  = transform.right * velocityX + transform.forward * speed + Vector3.up * velocityY; // turn right or left + run forward + gravity
-        
-        anim.SetFloat("horizontal", Input.GetAxis("Horizontal"));
-        
-        controller.Move (velocity * Time.deltaTime); 
-        
-        
 
-        if (controller.isGrounded) {
-			velocityY = 0;
-		}
+        velocityX = Input.GetAxis("Horizontal") *turnSpeed; // turn right or left
+        velocityY += Time.deltaTime * gravity; // gravity  
+        Vector3 velocity  = transform.forward * speed + Vector3.up * velocityY + transform.right * velocityX; // turn right or left + run forward + gravity
 
-        if(Input.GetButtonDown("Jump")) // jump 
-        {            
-            Jump();
+        controller.Move (velocity * Time.deltaTime); // to move controller
+        
+        anim.SetFloat("horizontal", Input.GetAxis("Horizontal"));// animation
             
+        if(controller.isGrounded){
+            velocityY = 0;
         }
 
-        if(Input.GetAxis("Vertical") < 0) // down
-        {
-            Down();
-            controller.height = 0.9f;
-            controller.center = new Vector3 (0 , 0.45f , 0);
+        if(Input.GetButtonDown("Jump")){
+            Jump();
         }
-        else
+        points++;
+        pointsTime.text = (points * 0.01).ToString("F0");// points
+
+        
+    }
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {    
+        if(hit.collider.gameObject.tag == "Obstacle"){       
+            points = 0;
+            this.gameObject.transform.position = new Vector3(10, 1, 2);
+        }else if(hit.collider.gameObject.tag == "BonusPoints")
         {
-            controller.height = 1.8f;
-            controller.center = new Vector3 (0 , 0.9f , 0);
+            Destroy(hit.collider.gameObject);
+            points = points + 500;
         }
     }
 
-    void Jump() {
-        
+
+    void Jump() {       
 		if (controller.isGrounded) {
             anim.SetTrigger("jump");
 			float jumpVelocity = Mathf.Sqrt (-2 * gravity * jumpHeight);
 			velocityY = jumpVelocity;
 		}
-    }
-
-    void Down()
-    {
-        if(controller.isGrounded)
-        {
-            anim.SetFloat("vertical", Input.GetAxis("Vertical"));
-        }
     }
 }
