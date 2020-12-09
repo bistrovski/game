@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class deathManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public CharacterController controller;
+
     void Start()
     {
         

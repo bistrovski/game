@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -9,11 +11,12 @@ public class playerController : MonoBehaviour
     public CharacterController controller;
     public TextMeshProUGUI pointsTime;
     private GameObject gem;
-    public float speed = 2;  
+    public float speed = 3;  
     public float turnSpeed = 2;
     public float gravity = -12;
 	public float jumpHeight = 1;
     float velocityY , velocityX;
+    float timer;
     private int points;  
     void Start()
     {
@@ -40,9 +43,8 @@ public class playerController : MonoBehaviour
         }
         points++;
         pointsTime.text = (points * 0.01).ToString("F0");// points
-
-        
     }
+    
     void OnControllerColliderHit(ControllerColliderHit hit)
     {    
         if(hit.collider.gameObject.tag == "Obstacle"){       
@@ -51,16 +53,29 @@ public class playerController : MonoBehaviour
         }else if(hit.collider.gameObject.tag == "BonusPoints")
         {
             Destroy(hit.collider.gameObject);
-            points = points + 500;
+            points += 500;
+        }else if(hit.collider.gameObject.tag == "BonusRun")
+        {
+            
+            Destroy(hit.collider.gameObject);            
+            StartCoroutine(BonusRunStar());     
+                                      
         }
     }
-
-
     void Jump() {       
 		if (controller.isGrounded) {
             anim.SetTrigger("jump");
 			float jumpVelocity = Mathf.Sqrt (-2 * gravity * jumpHeight);
 			velocityY = jumpVelocity;
 		}
+    }
+
+    IEnumerator BonusRunStar()
+    {
+        speed = 6;
+        points += 1000;
+        yield return new WaitForSeconds(5f);
+
+        speed = 3;
     }
 }

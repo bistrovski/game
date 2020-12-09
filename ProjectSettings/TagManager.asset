@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Obstacle
   - BonusPoints
+  - BonusRun
   layers:
   - Default
   - TransparentFX
